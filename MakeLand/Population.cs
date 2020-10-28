@@ -423,7 +423,6 @@ namespace MakeLand
         public int setScore()
         {
             score = 0;
-
             int seaCount = 0;
             int landCount = 0;
             int freshCount = 0;
@@ -434,15 +433,21 @@ namespace MakeLand
 
             for (int x = 0; x < Params.dimX; x = x + every)
             {
-                if (pheno[x, 0] == 0 || pheno[Params.dimY - 1, x] == 0)
-                {
-                    score = score + 5;
-                }
+                //if (pheno[x, 0] == 0 || pheno[Params.dimY - 1, x] == 0)
+                //if (pheno[x, 0] == 0)
+                //{
+                //    score = score + 1;
+                //}
                 for (int y = 0; y < Params.dimY; y = y + every)
                 {
-                    if (pheno[0, y] == 0 || pheno[Params.dimX - 1, y] == 0)
+                    //if (pheno[0, y] == 0 || pheno[Params.dimX - 1, y] == 0)
+                    if ((x < 10 && pheno[x, y] == 0) || (x > 115 && pheno[Params.dimX - (Params.dimX - x), y] == 0))
                     {
-                        score = score + 5;
+                        score = score + 1;
+                    } 
+                    if ((y < 10 && pheno[x, y] == 0) || (y > 115 && pheno[x, Params.dimY - (Params.dimY - y)] == 0 ))
+                    {
+                        score = score + 1;
                     }
 
                     int t1 = getTerrainSafe(x, y);
@@ -460,37 +465,33 @@ namespace MakeLand
                     }
                 }
             }
-
+            //Console.WriteLine("score: " + score);
             int total = landCount + seaCount + freshCount;
 
             double seaCountPercentage = (double) seaCount / total;
             double landCountPercentage = (double) landCount / total;
             double freshCountPercentage = (double) freshCount / total;
-            double test = 0.958;
-
-            //Console.WriteLine("Count Percentage: " + test);
-            //Console.WriteLine(total);
-            //Console.WriteLine(landCount + " " + seaCount + " " + freshCount);
-
-            //Console.WriteLine(seaCountPercentage);
-            //Console.WriteLine(landCountPercentage);
-            Console.WriteLine(freshCountPercentage);
-
 
             if (landCountPercentage < Params.percentLand)
             {
-                //score =  score - (((int) Params.percentLand) - ((int) landCountPercentage)) * 5;
-                score = score - 20;
+                double calcScore = (Params.percentLand - landCountPercentage) * 100 ;
+                Console.WriteLine("land calculation (suppose positive): " + (int)calcScore);
+                score =  score - ((int) calcScore);
             }
-            if (freshCountPercentage < Params.percentFresh)
+            if (freshCountPercentage > Params.percentFresh)
             {
-                //score = score - (((int)Params.percentFresh) - ((int)freshCountPercentage)) * 5;
-                score = score - 20;
-            } 
-            if (seaCountPercentage > (Params.percenSea)){
-                //score = score - (((int)Params.percenSea) - ((int)seaCountPercentage)) * 5;
-                score = score - 20;
+                double calcScore = (freshCountPercentage - Params.percentFresh) * 200;
+                Console.WriteLine("fresh calculation (suppose positive): " + (int)calcScore);
+                score = score - ((int)calcScore);
             }
+            if (seaCountPercentage > (Params.percenSea))
+            {
+                double calcScore = (seaCountPercentage - Params.percenSea) * 100;
+                Console.WriteLine("sea calculation (suppose positive): " + (int)calcScore);
+                score = score - ((int)calcScore);
+            }
+            Console.WriteLine(landCount + "\t" + seaCount + "\t" + freshCount);
+            Console.WriteLine("Return Score: " + score);
             return score;
         }
 

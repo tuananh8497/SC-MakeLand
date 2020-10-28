@@ -42,3 +42,14 @@ D:\University of Canberra\UC - Sem 2 2020\Soft Computing\GA Assignment\MakeLand_
 D:\University of Canberra\UC - Sem 2 2020\Soft Computing\GA Assignment\MakeLand_sv_zip\MakeLand_SV\MakeLand\obj\Debug\MakeLand.csproj.CoreCompileInputs.cache
 D:\University of Canberra\UC - Sem 2 2020\Soft Computing\GA Assignment\MakeLand_sv_zip\MakeLand_SV\MakeLand\obj\Debug\MakeLand.exe
 D:\University of Canberra\UC - Sem 2 2020\Soft Computing\GA Assignment\MakeLand_sv_zip\MakeLand_SV\MakeLand\obj\Debug\MakeLand.pdb
+C:\Users\tuana\git\SC-MakeLand\MakeLand\bin\Debug\MakeLand.exe.config
+C:\Users\tuana\git\SC-MakeLand\MakeLand\bin\Debug\MakeLand.exe
+C:\Users\tuana\git\SC-MakeLand\MakeLand\bin\Debug\MakeLand.pdb
+C:\Users\tuana\git\SC-MakeLand\MakeLand\obj\Debug\MakeLand.csprojAssemblyReference.cache
+C:\Users\tuana\git\SC-MakeLand\MakeLand\obj\Debug\MakeLand.Form1.resources
+C:\Users\tuana\git\SC-MakeLand\MakeLand\obj\Debug\MakeLand.Form2.resources
+C:\Users\tuana\git\SC-MakeLand\MakeLand\obj\Debug\MakeLand.Properties.Resources.resources
+C:\Users\tuana\git\SC-MakeLand\MakeLand\obj\Debug\MakeLand.csproj.GenerateResource.cache
+C:\Users\tuana\git\SC-MakeLand\MakeLand\obj\Debug\MakeLand.csproj.CoreCompileInputs.cache
+C:\Users\tuana\git\SC-MakeLand\MakeLand\obj\Debug\MakeLand.exe
+C:\Users\tuana\git\SC-MakeLand\MakeLand\obj\Debug\MakeLand.pdb
