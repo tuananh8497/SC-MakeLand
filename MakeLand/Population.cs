@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Media;
 using System.Globalization;
+using System.Threading;
 
 namespace MakeLand
 {
@@ -183,30 +184,54 @@ namespace MakeLand
         public void mutate(Genotype g, Random r)
         {
             G.mutationCount++;
-            int mType = r.Next(0, 2);
+            int mType = r.Next(0, 5);
+            Console.WriteLine("mType used: " + mType);
             switch (mType)
             {
                 case 0:
+                    Console.WriteLine("NO MUTATION USED !!!");
                     break;
                 case 1:
                     // tiny change
                     int gNum = r.Next(0, Params.genotypeSize);
-                    g.genes[gNum].x = g.genes[gNum].x + r.Next(-4, +5);
+                    g.genes[gNum].x = g.genes[gNum].x + r.Next(-5, +2);
                     if (g.genes[gNum].x >= Params.dimX || g.genes[gNum].x < 0)
                     {
                         g.genes[gNum] = new Gene(r);
                         // move it back on landscape
                     }
+                    Console.WriteLine("MUTATION 1 !!!");
                     break;
                 case 2:
                     // little change on y
                     gNum = r.Next(0, Params.genotypeSize);
-                    g.genes[gNum].y = g.genes[gNum].y + r.Next(-4, +2);
+                    g.genes[gNum].y = g.genes[gNum].y + r.Next(-5, +2);
                     if (g.genes[gNum].y >= Params.dimY || g.genes[gNum].y < 0)
                     {
                         g.genes[gNum] = new Gene(r);
                         // move it back on landscape
                     }
+                    Console.WriteLine("MUTATION 2 !!!");
+                    break;
+                case 3:
+                    gNum = r.Next(0, Params.genotypeSize);
+                    g.genes[gNum].repeatX = g.genes[gNum].repeatX + r.Next(-5, +2);
+                    if (g.genes[gNum].x >= Params.dimX || g.genes[gNum].x < 0)
+                    {
+                        g.genes[gNum] = new Gene(r);
+                        // move it back on landscape
+                    }
+                    Console.WriteLine("MUTATION 3 !!!");
+                    break;
+                case 4:
+                    gNum = r.Next(0, Params.genotypeSize);
+                    g.genes[gNum].repeatY = g.genes[gNum].repeatY + r.Next(-5, +2);
+                    if (g.genes[gNum].y >= Params.dimY || g.genes[gNum].y < 0)
+                    {
+                        g.genes[gNum] = new Gene(r);
+                        // move it back on landscape
+                    }
+                    Console.WriteLine("MUTATION 4 !!!");
                     break;
             }
         }
@@ -416,12 +441,32 @@ namespace MakeLand
             return pheno[x, y];
         }
 
+        public bool surroundCheck(int x, int y, int t1)
+        {
+            int count = 0;
+            bool isSurroundMore = false;
+
+            if (getTerrainSafe(x - 1, y) == t1) { count++; }
+            if (getTerrainSafe(x + 1, y) == t1) { count++; }
+            if (getTerrainSafe(x, y - 1) == t1) { count++; }
+            if (getTerrainSafe(x, y + 1) == t1) { count++; }
+
+            if (getTerrainSafe(x - 1, y - 1) == t1) { count++; }
+            if (getTerrainSafe(x + 1, y - 1) == t1) { count++; }
+            if (getTerrainSafe(x - 1, y + 1) == t1) { count++; }
+            if (getTerrainSafe(x + 1, y + 1) == t1) { count++; }
+
+            if (count >= 4) { isSurroundMore = true; }
+
+            return isSurroundMore;
+        }
         /// <summary>
         /// returns the score for selection - also stores it in Phenotype
         /// </summary>
         /// <returns></returns>
         public int setScore()
         {
+            Random r = new Random();
             score = 0;
             int seaCount = 0;
             int landCount = 0;
@@ -433,36 +478,57 @@ namespace MakeLand
 
             for (int x = 0; x < Params.dimX; x = x + every)
             {
-                //if (pheno[x, 0] == 0 || pheno[Params.dimY - 1, x] == 0)
-                //if (pheno[x, 0] == 0)
-                //{
-                //    score = score + 1;
-                //}
                 for (int y = 0; y < Params.dimY; y = y + every)
                 {
                     //if (pheno[0, y] == 0 || pheno[Params.dimX - 1, y] == 0)
-                    if ((x < 10 && pheno[x, y] == 0) || (x > 115 && pheno[Params.dimX - (Params.dimX - x), y] == 0))
+                    if ((x < 10 && getTerrainSafe(x, y) != 0) || (x > 117 && getTerrainSafe((Params.dimX - r.Next(1, 10)), y) != 0))
                     {
-                        score = score + 1;
+                        score = score - 2;
                     } 
-                    if ((y < 10 && pheno[x, y] == 0) || (y > 115 && pheno[x, Params.dimY - (Params.dimY - y)] == 0 ))
+                    if ((y < 10 && getTerrainSafe(x, y) != 0) || (y > 117 && getTerrainSafe(x, (Params.dimY - r.Next(1, 10))) != 0 ))
+                    {
+                        score = score - 2;
+                    } 
+
+                    
+                    int t1 = getTerrainSafe(x, y);
+
+                    bool checkMoreOrLess = surroundCheck(x, y, t1);
+
+                    if (t1 == 0 && !checkMoreOrLess)
+                    {
+                        score = score - 2;
+                        seaCount = seaCount + 1;
+                    } else if (t1 == 0 && checkMoreOrLess)
                     {
                         score = score + 1;
-                    }
-
-                    int t1 = getTerrainSafe(x, y);
-                    if (t1 == 0)
-                    {
                         seaCount = seaCount + 1;
                     }
-                    if (t1 == 1)
+
+                    if (t1 == 1 && checkMoreOrLess)
                     {
+                        score = score + 1; 
                         landCount = landCount + 1;
                     }
-                    if (t1 == 2)
+                    else if (t1 == 1 && !checkMoreOrLess)
                     {
+                        score = score - 2;
+                        seaCount = seaCount + 1;
+                    }
+
+
+                    if (t1 == 2 && checkMoreOrLess)
+                    {
+                        score = score + 1;
                         freshCount = freshCount + 1;
                     }
+                    else if (t1 == 2 && !checkMoreOrLess)
+                    {
+                        score = score - 2;
+                        seaCount = seaCount + 1;
+                    }
+
+
                 }
             }
             //Console.WriteLine("score: " + score);
@@ -474,23 +540,23 @@ namespace MakeLand
 
             if (landCountPercentage < Params.percentLand)
             {
-                double calcScore = (Params.percentLand - landCountPercentage) * 100 ;
+                double calcScore = (Params.percentLand - landCountPercentage) * 100 * 35;
                 Console.WriteLine("land calculation (suppose positive): " + (int)calcScore);
                 score =  score - ((int) calcScore);
             }
             if (freshCountPercentage > Params.percentFresh)
             {
-                double calcScore = (freshCountPercentage - Params.percentFresh) * 200;
+                double calcScore = (freshCountPercentage - Params.percentFresh) * 100 * 50;
                 Console.WriteLine("fresh calculation (suppose positive): " + (int)calcScore);
                 score = score - ((int)calcScore);
             }
             if (seaCountPercentage > (Params.percenSea))
             {
-                double calcScore = (seaCountPercentage - Params.percenSea) * 100;
+                double calcScore = (seaCountPercentage - Params.percenSea) * 100 * 25;
                 Console.WriteLine("sea calculation (suppose positive): " + (int)calcScore);
                 score = score - ((int)calcScore);
             }
-            Console.WriteLine(landCount + "\t" + seaCount + "\t" + freshCount);
+            Console.WriteLine("LAND: " + landCount + "\t SEA: " + seaCount + "\t FRESH: " + freshCount);
             Console.WriteLine("Return Score: " + score);
             return score;
         }
