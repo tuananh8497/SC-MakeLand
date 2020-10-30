@@ -184,16 +184,18 @@ namespace MakeLand
         public void mutate(Genotype g, Random r)
         {
             G.mutationCount++;
-            int mType = r.Next(0, 5);
+            int mType = r.Next(0, 6);
             Console.WriteLine("mType used: " + mType);
             switch (mType)
             {
                 case 0:
-                    Console.WriteLine("NO MUTATION USED !!!");
+                    int gNum = r.Next(0, Params.genotypeSize);
+                    g.genes[gNum] = new Gene(r);
+                    Console.WriteLine("MUTATION 0 !!!");
                     break;
                 case 1:
                     // tiny change
-                    int gNum = r.Next(0, Params.genotypeSize);
+                    gNum = r.Next(0, Params.genotypeSize);
                     g.genes[gNum].x = g.genes[gNum].x + r.Next(-5, +2);
                     if (g.genes[gNum].x >= Params.dimX || g.genes[gNum].x < 0)
                     {
@@ -231,8 +233,19 @@ namespace MakeLand
                         g.genes[gNum] = new Gene(r);
                         // move it back on landscape
                     }
-                    Console.WriteLine("MUTATION 4 !!!");
+                    Console.WriteLine("MUTATION 4 !!! - new Gene: " + g.genes[gNum]);
                     break;
+                case 5:
+                    gNum = r.Next(0, Params.genotypeSize);
+
+                    int curTerrain = g.genes[gNum].terrain;
+                    
+                    while (g.genes[gNum].terrain == curTerrain)
+                    {
+                        g.genes[gNum].terrain = r.Next(0, 2);
+                    }
+                    Console.WriteLine(" MUTATION 5 RUN !!! - current: " + curTerrain + "\t newTerrain: " + g.genes[gNum].terrain);
+                        break;
             }
         }
 
