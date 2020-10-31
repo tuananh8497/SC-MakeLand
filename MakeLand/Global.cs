@@ -45,7 +45,7 @@ namespace MakeLand
 
     public static class Params
     {
-        public static double percentLand = 0.30;  // % map thats land 
+        public static double percentLand = 0.50;  // % map thats land 
         public static double percentFresh = 0.05; // % map thats freshwater
         public static double percenSea = 1 - percentLand - percentFresh; // %map thats sea
 

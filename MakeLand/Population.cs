@@ -184,7 +184,7 @@ namespace MakeLand
         public void mutate(Genotype g, Random r)
         {
             G.mutationCount++;
-            int mType = r.Next(0, 6);
+            int mType = r.Next(0, 8);
             Console.WriteLine("mType used: " + mType);
             switch (mType)
             {
@@ -196,7 +196,7 @@ namespace MakeLand
                 case 1:
                     // tiny change
                     gNum = r.Next(0, Params.genotypeSize);
-                    g.genes[gNum].x = g.genes[gNum].x + r.Next(-5, +2);
+                    g.genes[gNum].x = g.genes[gNum].x + r.Next(-4, +2);
                     if (g.genes[gNum].x >= Params.dimX || g.genes[gNum].x < 0)
                     {
                         g.genes[gNum] = new Gene(r);
@@ -205,9 +205,9 @@ namespace MakeLand
                     Console.WriteLine("MUTATION 1 !!!");
                     break;
                 case 2:
-                    // little change on y
+                    // tiny change on y
                     gNum = r.Next(0, Params.genotypeSize);
-                    g.genes[gNum].y = g.genes[gNum].y + r.Next(-5, +2);
+                    g.genes[gNum].y = g.genes[gNum].y + r.Next(-4, +2);
                     if (g.genes[gNum].y >= Params.dimY || g.genes[gNum].y < 0)
                     {
                         g.genes[gNum] = new Gene(r);
@@ -217,7 +217,7 @@ namespace MakeLand
                     break;
                 case 3:
                     gNum = r.Next(0, Params.genotypeSize);
-                    g.genes[gNum].repeatX = g.genes[gNum].repeatX + r.Next(-5, +2);
+                    g.genes[gNum].repeatX = g.genes[gNum].repeatX + r.Next(-4, +2);
                     if (g.genes[gNum].x >= Params.dimX || g.genes[gNum].x < 0)
                     {
                         g.genes[gNum] = new Gene(r);
@@ -227,7 +227,7 @@ namespace MakeLand
                     break;
                 case 4:
                     gNum = r.Next(0, Params.genotypeSize);
-                    g.genes[gNum].repeatY = g.genes[gNum].repeatY + r.Next(-5, +2);
+                    g.genes[gNum].repeatY = g.genes[gNum].repeatY + r.Next(-4, +2);
                     if (g.genes[gNum].y >= Params.dimY || g.genes[gNum].y < 0)
                     {
                         g.genes[gNum] = new Gene(r);
@@ -245,7 +245,56 @@ namespace MakeLand
                         g.genes[gNum].terrain = r.Next(0, 2);
                     }
                     Console.WriteLine(" MUTATION 5 RUN !!! - current: " + curTerrain + "\t newTerrain: " + g.genes[gNum].terrain);
-                        break;
+                    break;
+                case 6:
+                    // copy gene and mutate it
+                    // swap 2 genes
+                    gNum = r.Next(0, Params.genotypeSize);
+                    int otherGene = r.Next(0, Params.genotypeSize);
+
+                    while (gNum == otherGene) { otherGene = r.Next(0, Params.genotypeSize); }
+
+                    Console.WriteLine("MUTATION 6 START HERE !!!! ");
+                    Console.WriteLine("BEFORE COPY --- " + g.genes[gNum].x + " - " + g.genes[gNum].y);
+
+
+                    g.genes[gNum].x = g.genes[otherGene].x + r.Next(-3, +2);
+                    g.genes[gNum].y = g.genes[otherGene].y + r.Next(-3, +2);
+
+                    Console.WriteLine("MATERIAL MUTATE --- " + g.genes[otherGene].x + " - " + g.genes[otherGene].y);
+                    Console.WriteLine("AFTER MUTATE --- " + g.genes[gNum].x + " - " + g.genes[gNum].y);
+
+                    if (g.genes[gNum].y >= Params.dimY || g.genes[gNum].y < 0 || g.genes[gNum].x >= Params.dimX || g.genes[gNum].x < 0)
+                    {
+                        g.genes[gNum] = new Gene(r);
+                        Console.WriteLine("NEW GENE CREATED");
+                    }
+                    else 
+                    { 
+                        Console.WriteLine("AFTER COPY --- " + g.genes[gNum].x + " - " + g.genes[gNum].y); 
+                    }
+                    break;
+                case 7:
+                    // swap 2 genes
+                    gNum = r.Next(0, Params.genotypeSize);
+                    otherGene = r.Next(0, Params.genotypeSize);
+
+                    while (gNum == otherGene) { otherGene = r.Next(0, Params.genotypeSize); }
+
+                    int tempX = g.genes[gNum].x;
+                    int tempY = g.genes[gNum].y;
+
+                    g.genes[gNum].x = g.genes[otherGene].x;
+                    g.genes[gNum].y = g.genes[otherGene].y;
+                    g.genes[otherGene].x = tempX;
+                    g.genes[otherGene].y = tempY;
+
+                    Console.WriteLine("MUTATION 7 !!! ");
+                    //Console.WriteLine("CHECK TEMP --- " + tempX + " - " + tempY);
+                    //Console.WriteLine("CHECK g[genes[gNum] --- " + g.genes[gNum].x + " - " + g.genes[gNum].y);
+                    //Console.WriteLine("CHECK g[genes[otherGene] --- " + g.genes[otherGene].x + " - " + g.genes[otherGene].y);
+
+                    break;
             }
         }
 
@@ -493,16 +542,14 @@ namespace MakeLand
             {
                 for (int y = 0; y < Params.dimY; y = y + every)
                 {
-                    //if (pheno[0, y] == 0 || pheno[Params.dimX - 1, y] == 0)
                     if ((x < 10 && getTerrainSafe(x, y) != 0) || (x > 117 && getTerrainSafe((Params.dimX - r.Next(1, 10)), y) != 0))
                     {
-                        score = score - 2;
+                        score = score - 3;
                     } 
                     if ((y < 10 && getTerrainSafe(x, y) != 0) || (y > 117 && getTerrainSafe(x, (Params.dimY - r.Next(1, 10))) != 0 ))
                     {
-                        score = score - 2;
+                        score = score - 3;
                     } 
-
                     
                     int t1 = getTerrainSafe(x, y);
 
